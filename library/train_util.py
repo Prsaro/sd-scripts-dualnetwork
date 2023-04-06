@@ -75,6 +75,14 @@ DEFAULT_LAST_OUTPUT_NAME = "last"
 
 IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".bmp", ".PNG", ".JPG", ".JPEG", ".WEBP", ".BMP"]
 
+# parser configuration
+resolution = "512,512"
+train_data_dir_1 = "/home/chenkaizheng/data/diffusion_data/dreambooth_3/lora_data/with_tag/sangyan_313_new" 
+model_path = "/home/chenkaizheng/codes/vscode/waifu/webui_new/stable-diffusion-webui/models/Stable-diffusion/anything-v4.5-pruned.ckpt"
+output_dir = "/home/chenkaizheng/codes/vscode/waifu/lora/lora_nanhong"
+save_every_n_epochs = 1
+max_train_steps = 3000
+
 
 class ImageInfo:
     def __init__(self, image_key: str, num_repeats: int, caption: str, is_reg: bool, absolute_path: str) -> None:
@@ -1814,7 +1822,7 @@ def add_sd_models_arguments(parser: argparse.ArgumentParser):
     parser.add_argument(
         "--pretrained_model_name_or_path",
         type=str,
-        default=None,
+        default=model_path,
         help="pretrained model to train, directory to Diffusers model or StableDiffusion checkpoint / 学習元モデル、Diffusers形式モデルのディレクトリまたはStableDiffusionのckptファイル",
     )
     parser.add_argument(
@@ -1829,7 +1837,7 @@ def add_optimizer_arguments(parser: argparse.ArgumentParser):
     parser.add_argument(
         "--optimizer_type",
         type=str,
-        default="",
+        default="Lion",
         help="Optimizer to use / オプティマイザの種類: AdamW (default), AdamW8bit, Lion, SGDNesterov, SGDNesterov8bit, DAdaptation, AdaFactor",
     )
 
@@ -1894,7 +1902,7 @@ def add_optimizer_arguments(parser: argparse.ArgumentParser):
 
 
 def add_training_arguments(parser: argparse.ArgumentParser, support_dreambooth: bool):
-    parser.add_argument("--output_dir", type=str, default=None, help="directory to output trained model / 学習後のモデル出力先ディレクトリ")
+    parser.add_argument("--output_dir", type=str, default=output_dir, help="directory to output trained model / 学習後のモデル出力先ディレクトリ")
     parser.add_argument("--output_name", type=str, default=None, help="base name of trained model file / 学習後のモデルの拡張子を除くファイル名")
     parser.add_argument(
         "--save_precision",
@@ -1904,7 +1912,7 @@ def add_training_arguments(parser: argparse.ArgumentParser, support_dreambooth: 
         help="precision in saving / 保存時に精度を変更して保存する",
     )
     parser.add_argument(
-        "--save_every_n_epochs", type=int, default=None, help="save checkpoint every N epochs / 学習中のモデルを指定エポックごとに保存する"
+        "--save_every_n_epochs", type=int, default=save_every_n_epochs, help="save checkpoint every N epochs / 学習中のモデルを指定エポックごとに保存する"
     )
     parser.add_argument(
         "--save_n_epoch_ratio",
@@ -1944,7 +1952,7 @@ def add_training_arguments(parser: argparse.ArgumentParser, support_dreambooth: 
         "--vae", type=str, default=None, help="path to checkpoint of vae to replace / VAEを入れ替える場合、VAEのcheckpointファイルまたはディレクトリ"
     )
 
-    parser.add_argument("--max_train_steps", type=int, default=1600, help="training steps / 学習ステップ数")
+    parser.add_argument("--max_train_steps", type=int, default=max_train_steps, help="training steps / 学習ステップ数")
     parser.add_argument(
         "--max_train_epochs",
         type=int,
@@ -2066,7 +2074,7 @@ def add_dataset_arguments(
     parser: argparse.ArgumentParser, support_dreambooth: bool, support_caption: bool, support_caption_dropout: bool
 ):
     # dataset common
-    parser.add_argument("--train_data_dir", type=str, default=None, help="directory for train images / 学習画像データのディレクトリ")
+    parser.add_argument("--train_data_dir", type=str, default=train_data_dir_1, help="directory for train images / 学習画像データのディレクトリ")
     parser.add_argument(
         "--shuffle_caption", action="store_true", help="shuffle comma-separated caption / コンマで区切られたcaptionの各要素をshuffleする"
     )
@@ -2104,7 +2112,7 @@ def add_dataset_arguments(
     parser.add_argument(
         "--resolution",
         type=str,
-        default=None,
+        default=resolution,
         help="resolution in training ('size' or 'width,height') / 学習時の画像解像度（'サイズ'指定、または'幅,高さ'指定）",
     )
     parser.add_argument(
